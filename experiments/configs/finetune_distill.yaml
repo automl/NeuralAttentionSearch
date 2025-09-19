@@ -1,0 +1,112 @@
+dataset:
+    source: HF
+    name: booksum.jsonl.zst
+    dataset_path:
+    config_name: sample
+    overwrite_cache: true
+    base_dir:
+
+    context_length_min: 1000
+    context_length_max: 16000
+
+    min_needle_depth_ratio: 0.05
+    max_needle_depth_ratio: 0.95
+
+    context_lengths_num_intervals: 50
+    depth_ratio_num_intervals: 1000
+    num_passkeys: 10
+    with_prompt: true
+
+tokenizer:
+    source: 'HF'
+    model_name: 'meta-llama/Meta-Llama-3.1-8B'
+    is_hybrid: false
+
+n_gpus: 1
+seed: 0
+
+
+model:
+    pre_trained_model_name: Meta-Llama-3.1-8B-Instruct
+    name:
+    base_dir:
+    pre_trained_model_path:
+
+model_general:
+    d_model: 4096
+    use_hybrid_models: false
+
+ssm_args:
+    d_state: 16
+    n_layers: 2
+    expand: 2
+    d_intermediate: 8192
+    norm_epsilon: 1e-5
+    rms_norm: true
+    residual_in_fp32: true
+    fused_add_norm: true
+
+optimizer_args:
+    type: adamw
+    lr: 2e-3
+    weight_decay: 1e-1
+    beta1: 0.9
+    beta2: 0.95
+
+trainer:
+    batch_size: 1
+    gradient_accumulation_steps: 1 # we note that this value is applied for each single gpu
+
+    lr_scheduler_type: LambdaLR
+
+    # lr scheduler
+    #warmup_iters: 500
+    #lr_decay_iters: 15000 # should be ~= max_iters per Chinchilla
+    #lr_min: 2e-6 # minimum learning rate, should be ~= learning_rate/10 per Chinchilla
+
+    max_iters: 7000
+    eval_iters: 200
+    eval_interval: 100
+
+    grad_clip: 1.0
+
+    on_cpu: false
+
+    use_lora: false
+    tune_par: qk
+    save_after_eval: true
+    train_on_labels: true
+
+
+transformer_args:
+    n_layers: 32
+    n_heads: 32
+    n_kv_heads: 8
+    n_msks: 8
+    intermediate_size: 14336
+    norm_eps: 1e-5
+    rope_theta: 500000
+
+    max_batch_size: 32
+    max_seq_len: 2048
+    nats_enable: true
+
+    apply_pos_emb: True
+    chunk_size: 32
+
+    update_fill_values_dyn: True
+    proj_fill_value_start: 0.1
+    proj_fill_value_end: 1e-20
+
+    proj_layer_is_ssm: True
+
+    sparse_regularized_value: 5e-7
+    local_seq_max_length: 256
+
+
+wandb:
+  name: ${model.name}
+  group:
+  project:
+  entity:
+  mode:

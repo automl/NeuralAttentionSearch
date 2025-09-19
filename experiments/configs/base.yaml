@@ -1,0 +1,83 @@
+dataset:
+    source: HF
+    name:  pg19
+    config_name: None
+    overwrite_cache: true
+    base_dir:
+    cache_dir:
+    streaming: false
+    char_level: false
+
+model:
+    name:
+    base_dir:
+
+n_gpus: 1
+seed: 0
+
+tokenizer:
+    source: 'tiktoken'
+    model_name: 'gpt2'
+
+model_general:
+    d_model: 256
+
+transformer_args:
+    n_layers: 8
+    n_heads: 8
+    n_kv_heads: 8
+    n_msks: 8
+    multiple_of: 256  # make SwiGLU hidden layer size multiple of large power of 2
+    ffn_dim_multiplier: 4
+    norm_eps: 1e-5
+    rope_theta: 500000
+
+    max_batch_size: 32
+    max_seq_len: 2048
+
+    nats_enable: True
+    sparse_regularized_value: 5e-7
+    local_seq_max_length: 16
+    chunk_merge_method: mean
+    chunk_size: 8
+    nats_backward_compress_on_q: false
+
+    apply_pos_emb: True
+
+
+optimizer_args:
+    type: adamw
+    lr: 6e-4
+    weight_decay: 1e-1
+    beta1: 0.9
+    beta2: 0.95
+
+
+trainer:
+    batch_size: 16
+    block_size_train: 1024
+    block_size_eval: [1024, ]
+    gradient_accumulation_steps: 4 # we note that this value is applied for each single gpu
+
+    # lr scheduler
+    warmup_iters: 2000
+    lr_decay_iters: 600000 # should be ~= max_iters per Chinchilla
+    lr_min: 6e-5 # minimum learning rate, should be ~= learning_rate/10 per Chinchilla
+
+    max_iters: 600000
+    eval_iters: 200
+    eval_interval: 1000
+
+    grad_clip: 0.1
+
+    on_cpu: false
+
+    save_after_eval: true
+
+
+wandb:
+  name: ${model.name}
+  group: ${dataset.name}_${model.name}
+  project:
+  entity:
+  mode: disabled
