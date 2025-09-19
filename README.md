@@ -58,8 +58,9 @@ pyhton hf_pred.py --nats_enable --adapter_path \THE\ADAPTER\PATH
 ```
 
 # Our paper
-The detailed information can be found under our paper:
+The detailed information can be found in our paper:
 
+```
 @article{deng2025neuralattentionsearch,
       title={Neural Attention Search}, 
       author={Difan Deng and Marius Lindauer},
@@ -69,3 +70,4 @@ The detailed information can be found under our paper:
       primaryClass={cs.CL},
       url={https://arxiv.org/abs/2502.13251}, 
 }
+```
