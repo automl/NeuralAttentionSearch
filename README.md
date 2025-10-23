@@ -1,19 +1,37 @@
 # Neural Attention Search (NAtS)
 
 
-This repository contains the codes for the paper "Neural Attention Search". 
+This repository contains the codes for the paper [Neural Attention Search](https://arxiv.org/abs/2502.13251). 
 
-NAtS is an end-to-end learnable sparse transformer model. It learns the importance of each token automatically to drop tokens that have little impact in the following predictions
+<img src="docs/images/attention_maps.png" style="width: 85%;" />
 
-To train a new nats model, please run the following commands:
+
+NAtS is an end-to-end learnable sparse transformer model. 
+Unlike transformers with sliding window attention (b) or Longformer (c) that defines global tokens within the fixed positions. 
+NAtS learns the importance of each token automatically and assign different roles to each token.
+
+<img src="docs/images/nats_inference.png" style="width: 85%;" />
+
+Tokens that are considered as less important will be removed from the KV cache, 
+thus reducing the over inference time and memory consumption with minimal performance loss
+
+<img src="docs/images/nats_perplexity_kv.png" style="width: 75%;" />
+<p float="right">
+<img src="docs/images/NAtSLatency.png" style="width: 45%;" /> 
+<img src="docs/images/NAtSLatency_decoding.png" style="width: 45%;" />
+</p>
+
+
+
+To train a new nats model from scratch, please run the following commands:
 ```
 cd experiments
-python train.py model.base_dir=\YOUR\PATH\TO\SAVE\MODEL n_gpus=2 dataset.base_dir=\YOUR\PATH\TO\DATASET transformer_args.nats_enable=True
+python train.py model.base_dir=\YOUR\PATH\TO\SAVE\MODEL n_gpus=4 dataset.base_dir=\YOUR\PATH\TO\DATASET transformer_args.nats_enable=True
 ```
 Then you could evaluate the nats model with
 ```
 cd experiments
-python eval.py model.base_dir=\YOUR\PATH\TO\SAVE\MODEL n_gpus=2 dataset.base_dir=\YOUR\PATH\TO\DATASET transformer_args.nats_enable=True
+python eval.py model.base_dir=\YOUR\PATH\TO\SAVE\MODEL n_gpus=1 dataset.base_dir=\YOUR\PATH\TO\DATASET transformer_args.nats_enable=True
 ```
 
 To fine-tune the dataset, first you need to generate the fine tuning training dataset from LongBench.
@@ -64,10 +82,7 @@ The detailed information can be found in our paper:
 @article{deng2025neuralattentionsearch,
       title={Neural Attention Search}, 
       author={Difan Deng and Marius Lindauer},
-      year={2025},
-      eprint={2502.13251},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2502.13251}, 
+      booktitle = {Proceedings of the 39th International Conference on Advances in Neural Information Processing Systems (NeurIPS'25)},
+      year      = {2025}
 }
 ```
